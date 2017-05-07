@@ -5,6 +5,8 @@
  */
 package com.mycompany.analyzer;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -19,16 +21,26 @@ public class VisualBalanceAnalyzer {
     private List<Rect> objectList;
     private List<Rect> faceList;
     
+    private int frameX;
+    private int frameY;
+    private int frameWidth;
+    private int frameHeight;
+    
     public VisualBalanceAnalyzer(Mat image, List<Rect> oList, List<Rect> fList) {
         img = image;
         objectList = oList;
         faceList = fList;
-        
-        //System.out.println("VISUAL BALANCE: " + calcEVisualBalance());
+    }
+    
+    public void setFrame(int x, int y, int width, int height) {
+        this.frameX = x;
+        this.frameY = y;
+        this.frameWidth = width;
+        this.frameHeight = height;
     }
     
     public double calcSumOfMass() {
-        double imgArea = img.width() * img.height();
+        double imgArea = frameWidth * frameHeight;
         double weight = imgArea * 3/100;
         double sumOfMass = 0;
         for (Rect rect : objectList) {
@@ -47,9 +59,9 @@ public class VisualBalanceAnalyzer {
     }
     
     public Point getImgCenter() {
-        int width = img.width() - 1;
-        int height = img.height() - 1;
-        return new Point(width / 2, height / 2);
+        int width = frameWidth - 1;
+        int height = frameHeight - 1;
+        return new Point(frameX + width / 2, frameY + height / 2);
     }
     
     public Point getAllRegionsCenter() {
@@ -57,7 +69,7 @@ public class VisualBalanceAnalyzer {
         int y = 0;
         int sumX = 0;
         int sumY = 0;
-        double imgArea = img.width() * img.height();
+        double imgArea = frameWidth * frameHeight;
         double weight = imgArea * 3/100;
         Point actualCenter;
         if (objectList.size() + faceList.size() > 0) {
@@ -84,12 +96,46 @@ public class VisualBalanceAnalyzer {
     private double distanceBtwPoints(Point a, Point b) {
         double xDiff = Math.abs(a.x - b.x);
         double yDiff = Math.abs(a.y - b.y);
-        return xDiff / img.width() + yDiff / img.height();
+        return xDiff / frameWidth + yDiff / frameHeight;
     }
     
     public double calcEVisualBalance() {
+        actualizeObjectList();
         double distance = distanceBtwPoints(getAllRegionsCenter(), getImgCenter());
         double vb =  Math.exp(-1 * Math.pow(distance, 2) / (2 * 0.2));
         return vb;
     }
+    
+    private Rect intersection(Rect r2) {
+        Rectangle awtRect1 = new Rectangle(frameX, frameY, frameX + frameWidth+1, frameY + frameHeight+1);
+        Rectangle awtRect2 = new Rectangle(r2.x, r2.y, r2.width, r2.height);
+        
+        Rectangle intersect = awtRect1.intersection(awtRect2);
+        if (intersect.width > 0 && intersect.height > 0) {
+            return new Rect(intersect.x, intersect.y, intersect.width, intersect.height);
+        }
+        else {
+            return null;
+        }
+    }
+    
+    private void actualizeObjectList() {
+        List<Rect> objectsInFrame = new ArrayList(0);
+        for (Rect rect : objectList) {
+            Rect inters = intersection(rect);
+            if (inters != null) {
+                objectsInFrame.add(inters);
+            }
+        }
+        objectList = objectsInFrame;
+        objectsInFrame = new ArrayList();
+        for (Rect rect : faceList) {
+            Rect inters = intersection(rect);
+            if (inters != null) {
+                objectsInFrame.add(inters);
+            }
+        }
+        faceList = objectsInFrame;
+    }
+    
 }

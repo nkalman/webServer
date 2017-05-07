@@ -14,7 +14,6 @@ public class Constants {
     public static final int COUNT_VALUE = 5;
     public static final int EPS_VALUE = 1;
     //pyrMeanShiftFiltering parameters
-//    public static final int SPATIAL_WINDOW_RADIUS = 30;
     public static final int COLOR_WINDOW_RADIUS = 100;
     public static final int MAX_LEVEL = 2;
     

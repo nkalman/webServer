@@ -68,8 +68,10 @@ public class LineDetector {
         double diagonal = Math.sqrt(width*width + height*height);
         int minOfWidthHeight = (width<height)?width:height;
         
-        Imgproc.HoughLinesP(edgeDetectedImg, lines, 1, Math.PI/180, minOfWidthHeight*10/100, diagonal*25/100, diagonal*4/100);
+        Imgproc.HoughLinesP(edgeDetectedImg, lines, 1, Math.PI/180, 
+                minOfWidthHeight*10/100, diagonal*25/100, diagonal*4/100);
 
+        
         int firstN = (lines.rows() < 5)?lines.rows():5;
 
         for (int x = 0; x < lines.rows(); x++) {
@@ -82,10 +84,8 @@ public class LineDetector {
             Point startPoint = new Point(x1, y1);
             Point endPoint = new Point(x2, y2);
 
-            
             double angle_inv = horizontalLine.getAngle(new Line(x1,y1,x2,y2));
             double angle = horizontalLine.getAngle(new Line(x2,y2,x1,y1));
-            //System.out.print(angle);
             if ((angle >= diagAngle1 - DIAGONAL_TRESHOLD && angle <= diagAngle1 + DIAGONAL_TRESHOLD) ||
                     (angle >= diagAngle2 - DIAGONAL_TRESHOLD && angle <= diagAngle2 + DIAGONAL_TRESHOLD) ||
                     (angle_inv >= diagAngle1 - DIAGONAL_TRESHOLD && angle_inv <= diagAngle1 + DIAGONAL_TRESHOLD) ||
@@ -95,11 +95,9 @@ public class LineDetector {
             }
             else {
                 lineList.add(new Line(x1,y1,x2,y2));
-                //Imgproc.line(img, startPoint, endPoint, new Scalar(255,0,0), 1);
             }
 
         }
-
           
         Collections.sort(lineList, new Comparator<Line>() {
              @Override public int compare(Line l1, Line l2) {
@@ -119,8 +117,7 @@ public class LineDetector {
                Point startPoint = new Point(x1, y1);
                Point endPoint = new Point(x2, y2);
                arr.add(lineList.get(i));
-               
-               Imgproc.line(img, startPoint, endPoint, new Scalar(0,0,255), 1);
+               Imgproc.line(img, startPoint, endPoint, new Scalar(0,0,255), 3);
             }
         } 
         lineList = arr;
