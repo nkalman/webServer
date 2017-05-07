@@ -1,0 +1,15 @@
+com\mycompany\analyzer\Analyzer.class
+com\mycompany\linedetection\Line.class
+com\mycompany\analyzer\RegionSizeAnalyzer.class
+com\mycompany\analyzer\VisualBalanceAnalyzer.class
+com\mycompany\mavenproject1\GenericResource.class
+com\mycompany\analyzer\Constants.class
+com\mycompany\linedetection\LineDetector$1.class
+com\mycompany\mavenproject1\ApplicationConfig.class
+com\mycompany\analyzer\DiagonalDominanceAnalyzer.class
+com\mycompany\facedetection\FaceDetector.class
+com\mycompany\linedetection\LineDetector.class
+com\mycompany\analyzer\AestheticScoreCalculator.class
+com\mycompany\objectdetection\ObjectDetector.class
+com\mycompany\analyzer\RuleOfThirdsAnalyzer.class
+com\mycompany\objectdetection\ObjectDetector$1.class
